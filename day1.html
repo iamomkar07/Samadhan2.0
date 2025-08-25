@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student details</title>
+</head>
+
+<body>
+    <script >
+        // day 1- print Student details from an object 
+let student = {
+    name: "Rahul Kumar",
+    age: 20,
+    course: "B.Tech CSE",
+    rollNo: "CSE102",
+    marks: {
+        physics: 85,
+        maths: 90,
+        chemistry: 88
+    }
+};
+
+// Direct print
+console.log("Name:", student.name);
+console.log("Age:", student.age);
+console.log("Course:", student.course);
+console.log("Roll No:", student.rollNo);
+
+// Nested object (marks)
+console.log("Marks:");
+console.log("  Physics:", student.marks.physics);
+console.log("  Maths:", student.marks.maths);
+console.log("  Chemistry:", student.marks.chemistry);
+
+
+// we can also write this code through loop
+
+    </script>
+
+    
+</body>
+</html>
