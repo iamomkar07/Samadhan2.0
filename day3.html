@@ -1,0 +1,75 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label, input { margin-bottom: 10px; display: block; }
+        button { padding: 10px 15px; }
+        #results { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Student Marks Calculator</h1>
+
+    <label for="mathMarks">Math Marks:</label>
+    <input type="number" id="mathMarks" min="0" max="100">
+
+    <label for="scienceMarks">Science Marks:</label>
+    <input type="number" id="scienceMarks" min="0" max="100">
+
+    <label for="englishMarks">English Marks:</label>
+    <input type="number" id="englishMarks" min="0" max="100">
+
+    <button onclick="calculateMarks()">Calculate Grade</button>
+
+    <div id="results"></div>
+
+    <script >
+function calculateMarks() {
+    const mathMarks = parseInt(document.getElementById('mathMarks').value);
+    const scienceMarks = parseInt(document.getElementById('scienceMarks').value);
+    const englishMarks = parseInt(document.getElementById('englishMarks').value);
+
+    // Input validation
+    if (isNaN(mathMarks) || isNaN(scienceMarks) || isNaN(englishMarks) ||
+        mathMarks < 0 || mathMarks > 100 ||
+        scienceMarks < 0 || scienceMarks > 100 ||
+        englishMarks < 0 || englishMarks > 100) {
+        document.getElementById('results').innerText = "Please enter valid marks between 0 and 100 for all subjects.";
+        return;
+    }
+
+    const totalMarks = mathMarks + scienceMarks + englishMarks;
+    const percentage = (totalMarks / 300) * 100; // Assuming 3 subjects, each out of 100
+
+    let grade;
+    if (percentage >= 90) {
+        grade = 'A';
+    } else if (percentage >= 80) {
+        grade = 'B';
+    } else if (percentage >= 70) {
+        grade = 'C';
+    } else if (percentage >= 60) {
+        grade = 'D';
+    } else {
+        grade = 'F';
+    }
+
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = `
+        Total Marks: ${totalMarks} <br>
+        Percentage: ${percentage.toFixed(2)}% <br>
+        Grade: ${grade}
+    `;
+}
+
+
+    </script>
+</body>
+</html>
