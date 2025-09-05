@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Auth Full-Stack App</title>
+  <style>
+    body { font-family: Arial; max-width: 400px; margin: 40px auto; }
+    input, button { display:block; margin:8px 0; padding:8px; width:100%; }
+    #profile { margin-top:20px; padding:10px; border:1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h2>Register</h2>
+  <input id="regUser" placeholder="Username" />
+  <input id="regPass" type="password" placeholder="Password" />
+  <button onclick="register()">Register</button>
+
+  <h2>Login</h2>
+  <input id="logUser" placeholder="Username" />
+  <input id="logPass" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+
+  <div id="profile"></div>
+
+<script>
+let token = null;
+
+async function register() {
+  const username = document.getElementById("regUser").value;
+  const password = document.getElementById("regPass").value;
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ username, password })
+  });
+  alert((await res.json()).message || "Err
