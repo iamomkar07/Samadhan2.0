@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Student Directory</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 30px auto; }
+    input, button { padding: 8px; margin: 5px; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 5px 0; padding: 8px; background: #f4f4f4; border-radius: 6px; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <h2>📖 Student Directory</h2>
+
+  <input id="name" placeholder="Student Name">
+  <input id="email" placeholder="Email">
+  <button onclick="addStudent()">Add</button>
+
+  <ul id="studentList"></ul>
+
+  <script>
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const studentList = document.getElementById("studentList");
+
+    // Load students on page load
+    async function loadStudents() {
+      const res = await fetch("/api/students");
+      const students = await res.json();
+      studentList.innerHTML = "";
+      students.forEach(s => {
+        const li = document.createElement("li");
+        li.innerHTML = `${s.name} (${s.email}) 
+          <button onclick="deleteStudent(${s.id})">❌</button>`;
+        studentList.appendChild(li);
+      });
+    }
+
+    // Add student
+    async function addStudent() {
+      const res = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nameInput.value, email: emailInput.value })
+      });
+      await res.json();
+      nameInput.value = "";
+      emailInput.value = "";
+      loadStudents();
+    }
+
+    // Delete student
+    async function deleteStudent(id) {
+      await fetch("/api/students/" + id, { method: "DELETE" });
+      loadStudents();
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
