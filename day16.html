@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Simple Online Store</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: 20px auto; }
+    .product, .cart-item { border:1px solid #ccc; padding:10px; margin:10px; border-radius:6px; }
+    .grid { display:flex; gap:10px; flex-wrap:wrap; }
+    button { margin-top: 8px; padding:6px 12px; }
+    #cart { margin-top: 20px; border-top: 2px solid #333; padding-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🛒 Simple Online Store</h1>
+  <h2>Products</h2>
+  <div id="products" class="grid"></div>
+
+  <h2>Your Cart</h2>
+  <div id="cart"></div>
+
+<script>
+const api = p => "/api" + p;
+
+async function loadProducts() {
+  const res = await fetch(api("/products"));
+  const products = await res.json();
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+  products.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <h3>${p.name}</h3>
+      <p>Price: ₹${p.price}</p>
+      <button onclick="addToCart(${p.id})">Add to Cart</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+async function loadCart() {
+  const res = await fetch(api("/cart"));
+  const cart = await res.json();
+  const container = document.getElementById("cart");
+  container.innerHTML = "";
+  if (cart.length === 0) {
+    container.innerHTML = "<p>Cart is empty</p>";
+    return;
+  }
+  cart.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = `
+      <strong>${item.product.name}</strong> (x${item.quantity}) - ₹${item.product.price * item.quantity}
+      <button onclick="removeFromCart(${item.product.id})">Remove</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+async function addToCart(id) {
+  await fetch(api("/cart"), {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ productId:id })
+  });
+  loadCart();
+}
+
+async function removeFromCart(id) {
+  await fetch(api("/cart/" + id), { method:"DELETE" });
+  loadCart();
+}
+
+loadProducts();
+loadCart();
+</script>
+</body>
+</html>
