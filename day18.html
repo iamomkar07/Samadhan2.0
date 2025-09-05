@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple Trello Clone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0; padding: 20px;
+    }
+    h2 { text-align: center; }
+    .board {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .column {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      flex: 1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .column h3 {
+      text-align: center;
+    }
+    .task {
+      background: #e3f2fd;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: grab;
+    }
+    .task.dragging {
+      opacity: 0.5;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      bor
