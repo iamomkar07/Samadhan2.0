@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Notes App</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 0 16px; }
+    h1 { text-align: center; }
+    input, textarea, button { margin: 4px 0; padding: 8px; width: 100%; }
+    button { width: auto; }
+    .note { border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin: 10px 0; }
+    .note h3 { margin: 0 0 6px; }
+    .actions { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Notes App</h1>
+  <div>
+    <input id="title" placeholder="Note title" />
+    <textarea id="content" placeholder="Note content"></textarea>
+    <button id="addBtn">Add Note</button>
+  </div>
+
+  <h2>Your Notes</h2>
+  <div id="notes"></div>
+
+  <script>
+    const api = path => '/api' + path;
+
+    async function loadNotes() {
+      const res = await fetch(api('/notes'));
+      const data = await res.json();
+      renderNotes(data);
+    }
+
+    function renderNotes(notes) {
+      const container = document.getElementById('notes');
+      container.innerHTML = '';
+      notes.forEach(n => {
+        const div = document.createElement('div');
+        div.className = 'note';
+
+        const title = document.createElement('h3');
+        title.textContent = n.title;
+
+        const content = document.createElement('p');
+        content.textContent = n.content;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = async () => {
+          const newTitle = prompt('Edit title', n.title);
+          const newContent = prompt('Edit content', n.content);
+          if (newTitle !== null && newContent !== null) {
+            await fetch(api('/notes/' + n.id), {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title: newTitle, content: newContent })
+            });
+            loadNotes();
+          }
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = async () => {
+          if (confirm('Delete this note?')) {
+            await fetch(api('/notes/' + n.id), { method: 'DELETE' });
+            loadNotes();
+          }
+        };
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        div.appendChild(title);
+        div.appendChild(content);
+        div.appendChild(actions);
+
+        container.appendChild(div);
+      });
+    }
+
+    document.getElementById('addBtn').onclick = async () => {
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      if (!title.trim() || !content.trim()) return alert("Fill both fields");
+      await fetch(api('/notes'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+      loadNotes();
+    };
+
+    loadNotes();
+  </script>
+</body>
+</html>
