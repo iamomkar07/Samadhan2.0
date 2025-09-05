@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mini Social Platform</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; background: #f9f9f9; }
+    h2 { text-align: center; }
+    .post-box { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+    input, textarea, button { padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    button { background: #4cafef; color: white; cursor: pointer; border: none; }
+    button:hover { background: #3a9ad9; }
+    .feed { display: flex; flex-direction: column; gap: 12px; }
+    .post { background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .post-header { font-weight: bold; margin-bottom: 6px; }
+    .like-btn { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>🌐 Mini Social Platform</h2>
+
+  <div class="post-box">
+    <input id="user" placeholder="Your name (optional)">
+    <textarea id="content" placeholder="What's on your mind?"></textarea>
+    <button onclick="addPost()">Post</button>
+  </div>
+
+  <div class="feed" id="feed"></div>
+
+  <script>
+    const feed = document.getElementById("feed");
+
+    async function loadPosts() {
+      const res = await fetch("/api/posts");
+      const posts = await res.json();
+      feed.innerHTML = "";
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+          <div class="post-header">${post.user}</div>
+          <div>${post.content}</div>
+          <button class="like-btn" onclick="likePost(${post.id})">👍 ${post.likes}</button>
+        `;
+        feed.appendChild(div);
+      });
+    }
+
+    async function addPost() {
+      const user = document.getElementById("user").value;
+      const content = document.getElementById("content").value;
+      if (!content.trim()) return;
+
+      await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, content })
+      });
+
+      document.getElementById("content").value = "";
+      loadPosts();
+    }
+
+    async function likePost(id) {
+      await fetch(`/api/posts/${id}/like`, { method: "POST" });
+      loadPosts();
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
